@@ -1,8 +1,7 @@
 import { UserButton } from '@clerk/nextjs'
 import Image from 'next/image'
 import Link from 'next/link'
-import React from 'react'
-import SheetDemo from './SheetNav'
+import SheetNav from './SheetNav'
 
 const MobileNavigation = () => {
   return (
@@ -12,7 +11,7 @@ const MobileNavigation = () => {
       </Link>
       <div className='flex items-center space-x-1'>
       <UserButton afterSignOutUrl='/' />
-      <SheetDemo />
+      <SheetNav />
       </div>
 
     </div>

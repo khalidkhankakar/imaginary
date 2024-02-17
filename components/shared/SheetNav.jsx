@@ -14,7 +14,7 @@ import { usePathname } from "next/navigation"
 import { ModeToggle } from "./ModeToggle"
 import { Menu } from "lucide-react"
 
-export default function SheetDemo() {
+export default function SheetNav() {
     const pathname = usePathname()
   return (
     <Sheet>
@@ -28,7 +28,7 @@ export default function SheetDemo() {
       <ul className='flex flex-col space-y-3 items-center justify-center mt-9'>
       {
           navLinks.map((nav)=>(
-            <li>
+            <li key={nav.label}>
             <Link href={nav.route} className={`flex items-center border border-orange-1 m-auto w-56 justify-center h py-1 rounded-lg space-x-1 hover:bg-orange-1 transition-all duration-500 ${(pathname === nav.route) && 'bg-orange-1'}  `}>
               <Image src={nav.icon} width={50} height={50} className='h-5 w-5 ' />
               <p className='text-[16px]'>{nav.label}</p>

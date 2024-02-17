@@ -16,7 +16,7 @@ const Sidebar = () => {
       <ul className='flex flex-col space-y-3 items-center justify-center mt-9'>
         {
           navLinks.slice(0,6).map((nav)=>(
-            <li>
+            <li key={nav.label}>
             <Link href={nav.route} className={`flex items-center border border-orange-1 lg:w-56 md:w-40 justify-center h py-1 rounded-lg space-x-2 hover:bg-orange-1 transition-all duration-500 ${(pathname === nav.route) && 'bg-orange-1'}  `}>
               <Image src={nav.icon} width={50} height={50} className='h-5 w-5 ' />
               <p className='lg:text-[16px] md:text-[15px]'>{nav.label}</p>
@@ -33,7 +33,7 @@ const Sidebar = () => {
       <ul className='flex flex-col space-y-3 items-center justify-center my-5 '>
       {
           navLinks.slice(6).map((nav)=>(
-            <li>
+            <li key={nav.label}>
             <Link href={nav.route} className={`flex   items-center border border-orange-1 lg:w-56 md:w-40 justify-center h py-1 rounded-lg space-x-2 hover:bg-orange-1 transition-all duration-500 ${(pathname === nav.route) && 'bg-orange-1'}  `}>
               <Image src={nav.icon} width={50} height={50} className='h-5 w-5 ' />
               <p className='text-[16px]'>{nav.label}</p>
