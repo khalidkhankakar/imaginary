@@ -11,7 +11,7 @@ const Sidebar = () => {
   return (
     <div className='col-span-3 dark:bg-dark-3 bg-light-2 min-h-screen hidden md:flex flex-col '>
       <Link href={'/'} className='flex mt-9 items-center justify-center'>
-        <Image src={'/assets/imaginary.svg'} width={200} height={20} alt="logo..." />
+        <Image src={'/assets/IMAGINARY.svg'} width={200} height={20} alt="logo..." />
       </Link>
       <ul className='flex flex-col space-y-3 items-center justify-center mt-9'>
         {
