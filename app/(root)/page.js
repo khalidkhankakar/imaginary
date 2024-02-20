@@ -1,10 +1,11 @@
-import { ModeToggle } from "@/components/shared/ModeToggle";
-import Image from "next/image";
-import Link from "next/link";
 
-export default function Home() {
+import { connectToDatabase } from "@/lib/database/connect";
+export default async function Home() {
+  const connected = await connectToDatabase()
+
   return (
     <div className="">
+      khalid
       </div>
   );
 }

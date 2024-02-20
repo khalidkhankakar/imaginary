@@ -14,8 +14,12 @@ import {
   } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { z } from "zod"
-import { aspectRatioOptions, defaultValues } from "@/constants"
+import { aspectRatioOptions, debounce, deepMergeObjects, defaultValues, transformationTypes } from "@/constants"
 import { CustomField } from "./CustomField"
+import { startTransition, useEffect, useState } from "react"
+import MediaUploader from "./MediaUploader"
+import TransformedImage from "./TransformedImage"
+import { getCldImageUrl } from "next-cloudinary"
 
 const formSchema = z.object({
   title: z.string(),
@@ -25,8 +29,17 @@ const formSchema = z.object({
   publicId:z.string()
 })
 // userId
-const TransformationForm = ({action, data=null,type}) => {
+const TransformationForm = ({userId,action, data=null,type,creditBalance, config=null}) => {
+  const transformationType = transformationTypes[type];
 
+  const [image, setImage] = useState(data)
+  const [newTransformation, setNewTransformation] = useState(null)
+  const [isTransforming, setIsTransforming] = useState(false)
+  const [transConfig, setTransConfig] = useState(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  
+  
     const initialValues = data && action === 'update' ? {
         title: data?.title,
         aspectRatio: data?.aspectRatio,
@@ -40,12 +53,61 @@ const TransformationForm = ({action, data=null,type}) => {
         defaultValues:initialValues
       })
       function onSubmit(values) {
-        console.log(values)
+        // console.log(values)
+        if(image) {
+          const transformationUrl = getCldImageUrl({
+            width: image?.width,
+            height: image?.height,
+            src: image?.publicId,
+            ...transConfig
+          })
+          console.log(transformationUrl);
+          setImage({...image, publicId:transformationUrl})
       }
-      const onSelectFieldHandler = (value, onChangeField)=>{
+      // console.log(image);
       }
-      const onInputChangeHandler = (firstName, value, type,onChangeField)=>{
 
+
+      const onSelectFieldHandler = (value, onChangeField)=>{
+        let imageSize = aspectRatioOptions[value];
+        console.log(imageSize);
+        setImage((prevState)=>({
+          ...prevState,
+          aspectRatio: imageSize.aspectRatio,
+          width: imageSize.width,
+          height: imageSize.height,
+        }))
+        setNewTransformation(transformationType.config);
+        return onChangeField(value)
+      }
+
+
+      const onTransformHandler = async () => {
+        setIsTransforming(true)
+        setTransConfig(
+          deepMergeObjects(newTransformation, transConfig)
+        )
+        setNewTransformation(null)
+      }
+    
+      useEffect(() => {
+        if(image && (type === 'restore' || type === 'removeBackground')) {
+          setNewTransformation(transformationType.config)
+        }
+      }, [image, transformationType.config, type])
+
+      const onInputChangeHandler = (fieldName, value, type,onChangeField)=>{
+        debounce(() => {
+          setNewTransformation((prevState) => ({
+            ...prevState,
+            [type]: {
+              ...prevState?.[type],
+              [fieldName === 'prompt' ? 'prompt' : 'to' ]: value 
+            }
+          }))
+        }, 1000)();
+          
+        return onChangeField(value)
       }
   return (
     <div className='mx-12 mt-2 md:-3'>
@@ -63,7 +125,9 @@ const TransformationForm = ({action, data=null,type}) => {
         control={form.control}
         name={'aspectRatio'}
         formLabel={'Aspect Ratio'}
-        render={({field})=> <Select                 onValueChange={(value) => onSelectFieldHandler(value, field.onChange)}
+        render={({field})=> 
+        <Select  
+        onValueChange={(value) => onSelectFieldHandler(value, field.onChange)}
         value={field.value}>
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select image ratio" />
@@ -73,7 +137,7 @@ const TransformationForm = ({action, data=null,type}) => {
             <SelectLabel>Aspect Ratio</SelectLabel>
             {
                 Object.keys(aspectRatioOptions).map((key)=>(
-                    <SelectItem key={key} value={key}>{aspectRatioOptions[key].label}</SelectItem>
+                    <SelectItem key={key} value={aspectRatioOptions[key].aspectRatio}>{aspectRatioOptions[key].label}</SelectItem>
 
                 ))
             }
@@ -120,11 +184,46 @@ const TransformationForm = ({action, data=null,type}) => {
           )}
         />
     }
+        <div className="flex flex-col lg:flex-row items-center  lg:space-x-3 lg:space-y-0 space-x-3 ">
+          <CustomField 
+            control={form.control}
+            name="publicId"
+            className="flex size-full flex-col"
+            render={({ field }) => (
+              <MediaUploader 
+                onValueChange={field.onChange}
+                setImage={setImage}
+                publicId={field.value}
+                image={image}
+                type={type}
+              />
+            )}
+          />
+
+<TransformedImage image={image} type={type} title={form.getValues().title} isTransforming={isTransforming} setIsTransforming={setIsTransforming} transConfig={transConfig} hasDownload={false} />
+</div>
 
 
-        <Button type="submit">Submit</Button>
+<div className="flex flex-col gap-4">
+          <Button 
+            type="button"
+            className="submit-button capitalize"
+            disabled={isTransforming || newTransformation === null}
+            onClick={onTransformHandler}
+          >
+            {isTransforming ? 'Transforming...' : 'Apply Transformation'}
+          </Button>
+          <Button 
+            type="submit"
+            className="submit-button capitalize"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Submitting...' : 'Save Image'}
+          </Button>
+        </div>
       </form>
     </Form>
+
     </div>
   )
 }

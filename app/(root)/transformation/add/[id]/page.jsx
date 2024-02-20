@@ -16,7 +16,7 @@ const Add = async ({params}) => {
     <>
     <Header title={transformation.title} subTitle={transformation.subTitle} />
     {/* userId={user._id} */}
-    <TransformationForm type={params.id}  />
+    <TransformationForm action={'Add'} type={params.id}  />
     </>
   )
 }

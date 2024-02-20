@@ -12,9 +12,9 @@ const Layout = ({children}) => {
   return (
     <>
       <MobileNavigation />
-    <main className="grid grid-cols-12">
+    <main className="grid grid-cols-12 ">
       <Sidebar />
-      <section className="col-span-12 md:col-span-9 border-l border-gray-200 dark:border-slate-200 shadow-md ">
+      <section className="col-span-12 md:col-span-9 border-l border-gray-200 dark:border-slate-200 shadow-md min-h-screen overflow-y-auto  ">
       {children}
       </section>
       </main>

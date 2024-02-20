@@ -9,7 +9,7 @@ import { ModeToggle } from './ModeToggle'
 const Sidebar = () => {
   const pathname = usePathname()
   return (
-    <div className='col-span-3 dark:bg-dark-3 bg-light-2 min-h-screen hidden md:flex flex-col '>
+    <div className='col-span-3 dark:bg-dark-3 bg-light-2 h-screen hidden md:flex flex-col '>
       <Link href={'/'} className='flex mt-9 items-center justify-center'>
         <Image src={'/assets/IMAGINARY.svg'} width={200} height={20} alt="logo..." />
       </Link>
